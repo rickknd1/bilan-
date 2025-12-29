@@ -1,0 +1,132 @@
+// Bilan Couple - Schema de base de données
+// https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============== MODELS ==============
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String
+  firstName     String
+  lastName      String
+  avatarUrl     String?
+
+  coupleId      String?
+  couple        Couple?   @relation(fields: [coupleId], references: [id])
+
+  bilans        Bilan[]
+  objectifs     Objectif[]
+
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Couple {
+  id              String    @id @default(cuid())
+  inviteCode      String    @unique
+  name            String?
+  anniversaryDate DateTime?
+
+  users           User[]
+  sharedObjectifs Objectif[] @relation("CoupleObjectifs")
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Bilan {
+  id          String          @id @default(cuid())
+  year        Int
+
+  userId      String
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  categories  BilanCategory[]
+
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@unique([userId, year])
+}
+
+model BilanCategory {
+  id                String       @id @default(cuid())
+  category          CategoryType
+  highlights        String       @db.Text
+  challenges        String       @db.Text
+  learnings         String       @db.Text
+  satisfactionScore Int          @default(5)
+
+  bilanId           String
+  bilan             Bilan        @relation(fields: [bilanId], references: [id], onDelete: Cascade)
+
+  @@unique([bilanId, category])
+}
+
+model Objectif {
+  id          String        @id @default(cuid())
+  title       String
+  description String?       @db.Text
+  category    CategoryType
+  type        ObjectifType
+  term        TermType
+  progress    Int           @default(0)
+  isStarred   Boolean       @default(false)
+  deadline    DateTime?
+
+  userId      String
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  coupleId    String?
+  couple      Couple?       @relation("CoupleObjectifs", fields: [coupleId], references: [id])
+
+  milestones  Milestone[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Milestone {
+  id          String    @id @default(cuid())
+  title       String
+  isCompleted Boolean   @default(false)
+  dueDate     DateTime?
+  order       Int       @default(0)
+
+  objectifId  String
+  objectif    Objectif  @relation(fields: [objectifId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// ============== ENUMS ==============
+
+enum CategoryType {
+  FINANCES
+  SANTE_SPORT
+  PROJETS_VIE
+  CARRIERE
+  SPIRITUALITE
+  DEVELOPPEMENT_PERSONNEL
+  LOISIRS_VOYAGES
+}
+
+enum ObjectifType {
+  PERSONNEL
+  COMMUN
+}
+
+enum TermType {
+  COURT_TERME
+  MOYEN_TERME
+  LONG_TERME
+}

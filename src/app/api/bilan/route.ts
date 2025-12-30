@@ -213,6 +213,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error("Erreur POST bilan:", error)
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : "Erreur inconnue"
+    return NextResponse.json({ error: "Erreur serveur", details: errorMessage }, { status: 500 })
   }
 }

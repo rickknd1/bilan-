@@ -147,7 +147,8 @@ export default function BilanPage() {
       if (res.ok) {
         toast("Bilan sauvegardé avec succès !")
       } else {
-        toast("Erreur lors de la sauvegarde", "error")
+        const data = await res.json()
+        toast(data.details || "Erreur lors de la sauvegarde", "error")
       }
     } catch (error) {
       console.error("Erreur sauvegarde:", error)

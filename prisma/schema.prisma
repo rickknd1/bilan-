@@ -23,6 +23,7 @@ model User {
   couple        Couple?   @relation(fields: [coupleId], references: [id])
 
   bilans        BilanMensuel[]
+  objectifs     ObjectifAnnuel[]
 
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
@@ -36,6 +37,7 @@ model Couple {
 
   users           User[]
   bilansCouple    BilanCouple[]
+  objectifs       ObjectifAnnuelCouple[]
 
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
@@ -107,6 +109,46 @@ model BilanCoupleEntry {
   @@unique([bilanId, category])
 }
 
+// Objectif annuel (global pour l'année)
+model ObjectifAnnuel {
+  id            String          @id @default(cuid())
+  year          Int
+  title         String
+  description   String?         @db.Text
+  category      CategoryType
+  status        ObjectifStatus  @default(EN_COURS)
+  progress      Int             @default(0)  // 0-100%
+  priority      PriorityLevel   @default(MEDIUM)
+
+  userId        String
+  user          User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([userId, year])
+}
+
+// Objectif annuel de couple
+model ObjectifAnnuelCouple {
+  id            String          @id @default(cuid())
+  year          Int
+  title         String
+  description   String?         @db.Text
+  category      CategoryType
+  status        ObjectifStatus  @default(EN_COURS)
+  progress      Int             @default(0)
+  priority      PriorityLevel   @default(MEDIUM)
+
+  coupleId      String
+  couple        Couple          @relation(fields: [coupleId], references: [id], onDelete: Cascade)
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([coupleId, year])
+}
+
 // ============== ENUMS ==============
 
 enum CategoryType {
@@ -115,4 +157,16 @@ enum CategoryType {
   SPIRITUALITE
   SANTE_SPORT
   ECOLE
+}
+
+enum ObjectifStatus {
+  EN_COURS
+  ATTEINT
+  ABANDONNE
+}
+
+enum PriorityLevel {
+  LOW
+  MEDIUM
+  HIGH
 }

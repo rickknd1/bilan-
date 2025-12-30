@@ -1,29 +1,18 @@
 import { PrismaClient } from "@prisma/client"
-import { neonConfig, Pool } from "@neondatabase/serverless"
-import { PrismaNeon } from "@prisma/adapter-neon"
-
-// Configure for serverless
-neonConfig.useSecureWebSocket = true
-neonConfig.pipelineTLS = false
-neonConfig.pipelineConnect = false
+import { Pool } from "pg"
+import { PrismaPg } from "@prisma/adapter-pg"
 
 const globalForPrisma = globalThis as unknown as {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  prisma: any | undefined
+  prisma: PrismaClient | undefined
 }
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL
-  if (!connectionString) {
-    // Return basic client during build
-    return new PrismaClient()
-  }
+  const connectionString = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_z8N0rfBFgUSV@ep-divine-base-ad1b2pp2-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"
 
   const pool = new Pool({ connectionString })
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const adapter = new PrismaNeon(pool as any)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return new PrismaClient({ adapter } as any)
+  const adapter = new PrismaPg(pool)
+
+  return new PrismaClient({ adapter })
 }
 
 export const prisma = globalForPrisma.prisma ?? createPrismaClient()

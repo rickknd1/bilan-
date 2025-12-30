@@ -314,7 +314,7 @@ export default function BilanPage() {
                                       value={bilanData[category.id]?.[field.key as keyof BilanEntry] || ""}
                                       onChange={(e) => handleChange(category.id, field.key as keyof BilanEntry, e.target.value)}
                                       disabled={viewMode === "partenaire"}
-                                      className="min-h-[80px] bg-white/70 dark:bg-zinc-900/50 border-0 resize-none focus:ring-2 focus:ring-pink-500/30 transition-all"
+                                      className="min-h-[80px] bg-white dark:bg-background border border-input resize-none focus:ring-2 focus:ring-primary/30 transition-all"
                                     />
                                   </div>
                                 ))}

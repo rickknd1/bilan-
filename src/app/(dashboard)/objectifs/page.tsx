@@ -58,15 +58,15 @@ export default function ObjectifsPage() {
             </p>
 
             <div className="flex flex-wrap gap-3 justify-center">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-card shadow-sm">
                 <Target className="h-4 w-4 text-amber-500" />
                 <span className="text-sm">Objectifs personnels</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-card shadow-sm">
                 <Target className="h-4 w-4 text-pink-500" />
                 <span className="text-sm">Objectifs couple</span>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-zinc-800 shadow-sm">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white dark:bg-card shadow-sm">
                 <Target className="h-4 w-4 text-violet-500" />
                 <span className="text-sm">Suivi de progression</span>
               </div>
